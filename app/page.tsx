@@ -16,19 +16,62 @@ export default function Home() {
     setError(null);
     
     try {
-      // For now, let's use the pendulum template as a demo
-      // In production, this would call our AI orchestrator
-      if (prompt.toLowerCase().includes('pendulum')) {
-        // Simulate AI generation delay
+      // Check if we should use demo mode
+      const isDemoMode = !process.env.NEXT_PUBLIC_API_CONFIGURED;
+      
+      if (isDemoMode && prompt.toLowerCase().includes('pendulum')) {
+        // Demo mode - use template
         await new Promise(resolve => setTimeout(resolve, 2000));
         setGeneratedCode(pendulumTemplate);
-      } else {
-        // For other prompts, we'll need the AI API
-        setError('AI generation requires API key configuration. For demo, try "show me how a pendulum works"');
+        return;
       }
-    } catch (err) {
-      setError('Failed to generate visualization. Please try again.');
+      
+      // Call the advanced AI orchestrator API
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt,
+          subject,
+          optimization: 'balanced'
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || data.error || 'Generation failed');
+      }
+      
+      if (data.success && data.code) {
+        setGeneratedCode(data.code);
+        
+        // Show validation warnings if any
+        if (data.validation?.warnings?.length > 0) {
+          console.warn('Validation warnings:', data.validation.warnings);
+        }
+        
+        // Log cost information
+        console.log(`Generation cost: $${data.cost.total.toFixed(4)}`);
+      } else {
+        throw new Error('Invalid response from API');
+      }
+    } catch (err: any) {
       console.error('Generation error:', err);
+      
+      // Provide helpful error messages
+      if (err.message?.includes('API keys not configured')) {
+        setError(
+          'AI generation requires API configuration. Set OPENAI_API_KEY or ANTHROPIC_API_KEY in your environment. ' +
+          'For demo, try "show me how a pendulum works"'
+        );
+      } else if (err.message?.includes('Budget limit exceeded')) {
+        setError('Monthly cost limit reached. Please contact support or try again next month.');
+      } else {
+        setError(`Failed to generate visualization: ${err.message}`);
+      }
     } finally {
       setIsGenerating(false);
     }

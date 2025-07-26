@@ -106,3 +106,7 @@ export class EducationalAIOrchestrator {
 export function createOrchestrator(apiKey: string): EducationalAIOrchestrator {
   return new EducationalAIOrchestrator(apiKey);
 }
+
+// Export the advanced orchestrator for production use
+export { AdvancedEducationalOrchestrator } from './advanced-orchestrator';
+export type { GenerationOptions, GenerationResult } from './advanced-orchestrator';
