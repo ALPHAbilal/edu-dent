@@ -13,16 +13,6 @@ async function getRAGSystem() {
     }
   }
   
-  if (process.env.SUPABASE_URL) {
-    try {
-      const module = await import('./rag-supabase');
-      console.log('Using Supabase for RAG');
-      return module.EducationalRAGSystem;
-    } catch (e) {
-      console.log('Supabase module not available, falling back to mock');
-    }
-  }
-  
   console.log('Using mock RAG system (no cloud storage)');
   const module = await import('./rag-system-mock');
   return module.EducationalRAGSystem;

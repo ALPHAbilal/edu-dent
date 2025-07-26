@@ -165,7 +165,7 @@ The `next.config.mjs` includes:
 - [ ] 50+ visualization templates
 - [ ] Teacher dashboard
 - [ ] Student progress tracking
-- [ ] Supabase backend integration
+- [ ] Backend integration
 - [ ] Real-time collaboration
 
 ### Phase 3: Monetization (6 months)
@@ -201,8 +201,6 @@ vercel --prod
 ```
 OPENAI_API_KEY=your_key_here
 CLAUDE_API_KEY=your_key_here
-SUPABASE_URL=your_url_here
-SUPABASE_ANON_KEY=your_key_here
 ```
 
 ## Troubleshooting

@@ -42,9 +42,9 @@ export function PromptInput({ onSubmit, isGenerating }: PromptInputProps) {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6">
+    <div className="w-full">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           <button
             type="button"
             onClick={() => setSubject('physics')}
@@ -88,20 +88,22 @@ export function PromptInput({ onSubmit, isGenerating }: PromptInputProps) {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe what you want to visualize..."
-            className="w-full p-4 pr-24 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800 dark:border-gray-600"
-            rows={3}
+            className="w-full p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800 dark:border-gray-600 min-h-[120px]"
+            rows={4}
             disabled={isGenerating}
           />
-          <button
-            type="submit"
-            disabled={!prompt.trim() || isGenerating}
-            className={cn(
-              "absolute bottom-4 right-4 px-6 py-2 rounded-md font-medium transition-colors",
-              !prompt.trim() || isGenerating
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            )}
-          >
+        </div>
+        
+        <button
+          type="submit"
+          disabled={!prompt.trim() || isGenerating}
+          className={cn(
+            "w-full px-6 py-3 rounded-lg font-medium transition-colors",
+            !prompt.trim() || isGenerating
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+          )}
+        >
             {isGenerating ? (
               <span className="flex items-center gap-2">
                 <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
@@ -125,8 +127,7 @@ export function PromptInput({ onSubmit, isGenerating }: PromptInputProps) {
             ) : (
               'Generate'
             )}
-          </button>
-        </div>
+        </button>
 
         <div className="space-y-2">
           <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Try these examples:</p>
@@ -136,7 +137,7 @@ export function PromptInput({ onSubmit, isGenerating }: PromptInputProps) {
                 key={index}
                 type="button"
                 onClick={() => handleExampleClick(example)}
-                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-full transition-colors"
+                className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-full transition-colors border border-gray-200 dark:border-gray-600"
                 disabled={isGenerating}
               >
                 {example}

@@ -30,7 +30,7 @@ export function Editor({ code, onCodeChange, readOnly = true }: EditorProps) {
   if (!code) return null;
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 pb-6">
+    <div className="w-full h-full p-6">
       <div className="bg-gray-900 rounded-lg overflow-hidden">
         <div className="flex items-center justify-between p-4 bg-gray-800">
           <h3 className="text-sm font-medium text-gray-300">Generated Code</h3>

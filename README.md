@@ -60,7 +60,7 @@ EduViz-AI/
 2. **Claude API**: Switch from OpenAI to Anthropic
 3. **More Templates**: Expand physics, add chemistry/biology
 4. **Teacher Dashboard**: Progress tracking and customization
-5. **Deployment**: Vercel hosting with Supabase backend
+5. **Deployment**: Vercel hosting with cloud backend
 
 ## 🤝 Contributing
 

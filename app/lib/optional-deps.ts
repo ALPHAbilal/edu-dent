@@ -25,16 +25,6 @@ export const loadAnthropic = async () => {
   }
 };
 
-export const loadSupabase = async () => {
-  try {
-    const { createClient } = await import('@supabase/supabase-js');
-    console.log('Supabase SDK loaded successfully');
-    return createClient;
-  } catch (error: any) {
-    console.warn('Supabase not available:', error.message);
-    return null;
-  }
-};
 
 export const loadChromaDB = async () => {
   try {
@@ -65,24 +55,21 @@ export const getAvailableServices = async () => {
   const services = {
     pinecone: false,
     anthropic: false,
-    supabase: false,
     chromadb: false,
     langchain: false,
     openai: true // Assuming OpenAI is always available
   };
   
   // Test each service availability
-  const [pinecone, anthropic, supabase, chromadb, langchain] = await Promise.all([
+  const [pinecone, anthropic, chromadb, langchain] = await Promise.all([
     loadPinecone(),
     loadAnthropic(),
-    loadSupabase(),
     loadChromaDB(),
     loadLangchain()
   ]);
   
   services.pinecone = !!pinecone;
   services.anthropic = !!anthropic;
-  services.supabase = !!supabase;
   services.chromadb = !!chromadb;
   services.langchain = !!langchain;
   
@@ -100,8 +87,6 @@ export const isFeatureAvailable = async (feature: string): Promise<boolean> => {
       return services.pinecone || services.chromadb;
     case 'advancedAI':
       return services.anthropic;
-    case 'database':
-      return services.supabase;
     default:
       return false;
   }

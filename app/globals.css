@@ -36,3 +36,36 @@ body {
 .text-gray-500 {
   color: var(--text-secondary);
 }
+
+/* Split view utilities */
+@layer utilities {
+  .panel-height {
+    height: calc(100vh - 4rem); /* Minus header height */
+  }
+  
+  .panel-height-mobile {
+    height: calc(100vh - 7rem); /* Minus header and mobile nav height */
+  }
+  
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.2) transparent;
+  }
+  
+  .scroll-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scroll-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scroll-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 3px;
+  }
+  
+  .scroll-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0,0,0,0.3);
+  }
+}

@@ -3,6 +3,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/app/lib/utils';
 
+// Declare d3 on window
+declare global {
+  interface Window {
+    d3: any;
+  }
+}
+
 interface PreviewProps {
   code: string;
   isLoading?: boolean;
@@ -25,22 +32,47 @@ export function Preview({ code, isLoading, error }: PreviewProps) {
           containerRef.current.innerHTML = '<div id="visualization"></div>';
         }
 
-        // Create a script element to execute the D3 code
+        // First, load D3.js from the official CDN
+        const loadD3 = () => {
+          return new Promise((resolve, reject) => {
+            // Check if D3 is already loaded
+            if (window.d3) {
+              resolve(window.d3);
+              return;
+            }
+
+            const d3Script = document.createElement('script');
+            d3Script.src = 'https://d3js.org/d3.v7.min.js';
+            d3Script.onload = () => {
+              console.log('D3.js loaded successfully');
+              resolve(window.d3);
+            };
+            d3Script.onerror = () => reject(new Error('Failed to load D3.js'));
+            document.head.appendChild(d3Script);
+          });
+        };
+
+        // Load D3 first, then execute the visualization
+        await loadD3();
+
+        // Create a script element to execute the generated code
         const script = document.createElement('script');
-        script.type = 'module';
         
-        // Wrap the code in an IIFE to avoid polluting global scope
+        // Wrap the code to catch errors
         script.textContent = `
-          import * as d3 from 'https://cdn.skypack.dev/d3@7';
-          window.d3 = d3;
-          
-          try {
-            ${code}
-          } catch (error) {
-            console.error('Visualization error:', error);
-            document.getElementById('visualization').innerHTML = 
-              '<div style="color: red; padding: 20px;">Error: ' + error.message + '</div>';
-          }
+          (function() {
+            try {
+              console.log('Executing visualization code...');
+              ${code}
+              console.log('Visualization executed successfully');
+            } catch (error) {
+              console.error('Visualization error:', error);
+              document.getElementById('visualization').innerHTML = 
+                '<div style="color: red; padding: 20px; border: 1px solid red; border-radius: 4px; margin: 20px 0;">' +
+                '<strong>Visualization Error:</strong><br/>' + error.message + 
+                '<br/><br/><small>Check the browser console for more details.</small></div>';
+            }
+          })();
         `;
 
         // Add the script to the container
@@ -49,6 +81,13 @@ export function Preview({ code, isLoading, error }: PreviewProps) {
         }
       } catch (err) {
         console.error('Failed to execute visualization:', err);
+        if (containerRef.current) {
+          containerRef.current.innerHTML = `
+            <div style="color: red; padding: 20px; border: 1px solid red; border-radius: 4px;">
+              <strong>Failed to load visualization:</strong><br/>${err.message}
+            </div>
+          `;
+        }
       } finally {
         setIsExecuting(false);
       }
@@ -59,7 +98,7 @@ export function Preview({ code, isLoading, error }: PreviewProps) {
 
   if (error) {
     return (
-      <div className="w-full max-w-4xl mx-auto p-6">
+      <div className="w-full p-6">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <h3 className="text-red-800 font-semibold mb-2">Error</h3>
           <p className="text-red-700">{error}</p>
@@ -70,7 +109,7 @@ export function Preview({ code, isLoading, error }: PreviewProps) {
 
   if (isLoading) {
     return (
-      <div className="w-full max-w-4xl mx-auto p-6">
+      <div className="w-full p-6">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
           <div className="flex flex-col items-center justify-center space-y-4">
             <div className="animate-pulse space-y-3 w-full">
@@ -87,7 +126,7 @@ export function Preview({ code, isLoading, error }: PreviewProps) {
 
   if (!code) {
     return (
-      <div className="w-full max-w-4xl mx-auto p-6">
+      <div className="w-full p-6">
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
